@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import prismaPlugin from "./plugins/prisma";
+import { errorHandler } from "./interfaces/middleware/errorHandler";
 const fastify = Fastify({
   logger: true,
 });
@@ -13,6 +14,7 @@ fastify.get("/health", async () => {
   };
 });
 
+fastify.setErrorHandler(errorHandler)
 fastify.register(prismaPlugin)
 
 export default fastify;
