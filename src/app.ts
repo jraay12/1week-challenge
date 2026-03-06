@@ -1,5 +1,5 @@
 import Fastify from "fastify";
-
+import prismaPlugin from "./plugins/prisma";
 const fastify = Fastify({
   logger: true,
 });
@@ -12,5 +12,7 @@ fastify.get("/health", async () => {
     timestamp: new Date().toISOString(),
   };
 });
+
+fastify.register(prismaPlugin)
 
 export default fastify;
