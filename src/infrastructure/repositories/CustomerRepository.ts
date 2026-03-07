@@ -1,5 +1,5 @@
-import { Customer } from "../domain/entities/customer.entity";
-import { ICustomerRepository } from "../domain/repositories/ICustomerRepository";
+import { Customer } from "../../domain/entities/customer.entity";
+import { ICustomerRepository } from "../../domain/repositories/ICustomerRepository";
 import { FastifyInstance } from "fastify";
 export class CustomerRepository implements ICustomerRepository {
   constructor(private fastify: FastifyInstance) {}
