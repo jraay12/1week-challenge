@@ -8,10 +8,14 @@ import { Payload } from "../domain/services/ITokenService";
 import { LoginUsecase } from "../application/usecases/LoginUsecase";
 import { JwtService } from "../infrastructure/services/JwtService";
 import { RefreshTokenUsecase } from "../application/usecases/RefreshTokenUsecase";
+import { ProductController } from "../interfaces/controllers/product.controller";
+import { ProductRepository } from "../infrastructure/repositories/ProductRepository";
+import { CreateProductUsecase } from "../application/usecases/CreateProductUsecase";
 
 declare module "fastify" {
   interface FastifyInstance {
     customerController: CustomerController;
+    productController: ProductController;
     bcrypt: {
       hash(password: string, saltRounds?: number): Promise<string>;
       compare(password: string, passwordHash: string): Promise<boolean>;
@@ -28,6 +32,7 @@ declare module "fastify" {
 const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
   // Service
   const customerRepository = new CustomerRepository(fastify);
+  const productRepository = new ProductRepository(fastify);
   const bcryptPasswordHasher = new BcryptPasswordHasher(fastify);
   const jwtService = new JwtService(fastify);
 
@@ -45,6 +50,7 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     jwtService,
     customerRepository,
   );
+  const createProductUsecase = new CreateProductUsecase(productRepository);
 
   // Controllers
   const customerController = new CustomerController(
@@ -53,7 +59,10 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     refreshTokenUsecase,
   );
 
+  const productController = new ProductController(createProductUsecase);
+
   fastify.decorate("customerController", customerController);
+  fastify.decorate("productController", productController);
 });
 
 export default diPlugin;
