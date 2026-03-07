@@ -16,12 +16,13 @@
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.4.2",
     "@prisma/client": "^7.4.2",
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.3.1",
     "fastify": "^5.8.1",
-    "fastify-bcrypt-plugin": "^1.0.6",
     "fastify-plugin": "^5.1.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^25.3.5",
     "nodemon": "^3.1.14",
     "prisma": "^7.4.2",
