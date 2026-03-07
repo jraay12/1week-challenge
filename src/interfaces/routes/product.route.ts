@@ -8,4 +8,8 @@ export async function productRoutes(fastify: FastifyInstance) {
   fastify.get("/all-product", async (req, reply) =>
     fastify.productController.getAll(req, reply),
   );
+
+  fastify.patch("/add-stock/:productId", async (req, reply) =>
+    fastify.productController.addStock(req, reply),
+  );
 }
