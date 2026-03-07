@@ -8,16 +8,23 @@ import { FastifyPluginAsync } from "fastify";
 declare module "fastify" {
   interface FastifyInstance {
     customerController: CustomerController;
+    bcrypt: {
+      hash(password: string, saltRounds?: number): Promise<string>;
+      compare(password: string, passwordHash: string): Promise<boolean>;
+    };
   }
 }
 
-const diPlugin: FastifyPluginAsync = fp(async (fasitfy) => {
-  const customerRepository = new CustomerRepository(fasitfy);
-  const bcryptPasswordHasher = new BcryptPasswordHasher(fasitfy)
-  const createCustomerUsecase = new CreateCustomerUsecase(customerRepository, bcryptPasswordHasher);
+const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
+  const customerRepository = new CustomerRepository(fastify);
+  const bcryptPasswordHasher = new BcryptPasswordHasher(fastify);
+  const createCustomerUsecase = new CreateCustomerUsecase(
+    customerRepository,
+    bcryptPasswordHasher,
+  );
   const customerController = new CustomerController(createCustomerUsecase);
 
-  fasitfy.decorate("customerController", customerController);
+  fastify.decorate("customerController", customerController);
 });
 
 export default diPlugin;
