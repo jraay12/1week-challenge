@@ -37,4 +37,25 @@ export class CustomerRepository implements ICustomerRepository {
       },
     });
   }
+
+  async findById(customer_id: string): Promise<Customer | null> {
+    const customer = await this.fastify.prisma.customer.findUnique({
+      where: {
+        id: customer_id,
+      },
+    });
+
+    if (!customer) return null;
+
+    return Customer.fromPersistence({
+      id: customer.id,
+      name: customer.name,
+      email: customer.email,
+      password: customer.password,
+      address: customer.address,
+      phone: customer.phone,
+      createdAt: customer.createdAt,
+      updatedAt: customer.updatedAt,
+    });
+  }
 }
