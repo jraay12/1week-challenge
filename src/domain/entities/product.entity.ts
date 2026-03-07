@@ -60,17 +60,32 @@ export class Product {
     return data.map((product) => new Product(product));
   }
 
-   toJSON(): ProductResponseDTO {
-      return {
-        id: this.id,
-        name: this.name,
-        price: this.price,
-        stock: this.stock,
-        description: this.description,
-        createdAt: this.createdAt!,
-        updatedAt: this.updatedAt!,
-      };
+  static fromPersistence(data: ProductProps): Product {
+    return new Product(data);
+  }
+
+  toJSON(): ProductResponseDTO {
+    return {
+      id: this.id,
+      name: this.name,
+      price: this.price,
+      stock: this.stock,
+      description: this.description,
+      createdAt: this.createdAt!,
+      updatedAt: this.updatedAt!,
+    };
+  }
+
+  addStock(quantity: number) {
+    if (quantity == null || isNaN(quantity)) {
+      throw new BadRequestError("Quantity must be a valid number");
     }
+    if (quantity <= 0)
+      throw new BadRequestError("Quantity should be greater than zero");
+
+    this.props.stock += quantity;
+    this.props.updatedAt = new Date();
+  }
 
   // Getters
   get id(): string {
@@ -98,6 +113,6 @@ export class Product {
   }
 
   get description(): string | undefined | null {
-    return this.props.description
+    return this.props.description;
   }
 }
