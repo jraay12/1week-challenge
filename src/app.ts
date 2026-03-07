@@ -7,6 +7,7 @@ import { bcryptPlugin } from "./plugins/bcrypt";
 import { jwtPlugin } from "./plugins/jwt";
 import fastifyCookie from "@fastify/cookie";
 import { productRoutes } from "./interfaces/routes/product.route";
+import { salesRoutes } from "./interfaces/routes/sales.route";
 const fastify = Fastify({
   logger: true,
 });
@@ -29,6 +30,7 @@ fastify.register(fastifyCookie, {
   secret: process.env.COOKIE_TOKEN_SECRET!,
 });
 fastify.register(customerRoutes, { prefix: "/customers" });
-fastify.register(productRoutes, {prefix: "/products"})
+fastify.register(productRoutes, { prefix: "/products" });
+fastify.register(salesRoutes, { prefix: "/sales" });
 
 export default fastify;
