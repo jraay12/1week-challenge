@@ -4,7 +4,9 @@ import { CreateCustomerUsecase } from "../application/usecases/CreateCustomerUse
 import { CustomerController } from "../interfaces/controllers/customer.controller";
 import { BcryptPasswordHasher } from "../infrastructure/services/BcryptPasswordHasher";
 import { FastifyPluginAsync } from "fastify";
-
+import { Payload } from "../domain/services/ITokenService";
+import { LoginUsecase } from "../application/usecases/LoginUsecase";
+import { JwtService } from "../infrastructure/services/JwtService";
 declare module "fastify" {
   interface FastifyInstance {
     customerController: CustomerController;
@@ -12,17 +14,37 @@ declare module "fastify" {
       hash(password: string, saltRounds?: number): Promise<string>;
       compare(password: string, passwordHash: string): Promise<boolean>;
     };
+    jwt: {
+      signAccessToken(payload: Payload): string;
+      signRefreshToken(payload: Payload): string;
+      verifyAccessToken(token: string): Payload;
+      verifyRefreshToken(token: string): Payload;
+    };
   }
 }
 
 const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
+  // Service
   const customerRepository = new CustomerRepository(fastify);
   const bcryptPasswordHasher = new BcryptPasswordHasher(fastify);
+  const jwtService = new JwtService(fastify);
+
+  // Usecase
   const createCustomerUsecase = new CreateCustomerUsecase(
     customerRepository,
     bcryptPasswordHasher,
   );
-  const customerController = new CustomerController(createCustomerUsecase);
+  const loginUsecase = new LoginUsecase(
+    customerRepository,
+    bcryptPasswordHasher,
+    jwtService,
+  );
+
+  // Controllers
+  const customerController = new CustomerController(
+    createCustomerUsecase,
+    loginUsecase,
+  );
 
   fastify.decorate("customerController", customerController);
 });
