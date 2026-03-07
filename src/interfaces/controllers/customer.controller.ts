@@ -29,6 +29,14 @@ export class CustomerController {
     const input = request.body as LoginDTO;
     const { accessToken, refreshToken } =
       await this.loginUsecase.execute(input);
+    reply.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      signed: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60,
+    });
     reply.status(200).send({ accessToken });
   };
 }
