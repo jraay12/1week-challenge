@@ -13,11 +13,14 @@ import { ProductRepository } from "../infrastructure/repositories/ProductReposit
 import { CreateProductUsecase } from "../application/usecases/CreateProductUsecase";
 import { GetAllProductUsecase } from "../application/usecases/GetAllProductUsecase";
 import { AddStockUsecase } from "../application/usecases/AddStockUsecase";
-
+import { SalesRepository } from "../infrastructure/repositories/SalesRepository";
+import { SalesController } from "../interfaces/controllers/sales.controller";
+import { CreateSalesUsecase } from "../application/usecases/CreateSaleUsecase";
 declare module "fastify" {
   interface FastifyInstance {
     customerController: CustomerController;
     productController: ProductController;
+    salesController: SalesController;
     bcrypt: {
       hash(password: string, saltRounds?: number): Promise<string>;
       compare(password: string, passwordHash: string): Promise<boolean>;
@@ -37,6 +40,7 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
   const productRepository = new ProductRepository(fastify);
   const bcryptPasswordHasher = new BcryptPasswordHasher(fastify);
   const jwtService = new JwtService(fastify);
+  const salesRepository = new SalesRepository(fastify);
 
   // Usecase
   const createCustomerUsecase = new CreateCustomerUsecase(
@@ -53,19 +57,30 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     customerRepository,
   );
   const createProductUsecase = new CreateProductUsecase(productRepository);
-  const getAllProductUsecase = new GetAllProductUsecase(productRepository)
-  const addStockUsecase = new AddStockUsecase(productRepository)
+  const getAllProductUsecase = new GetAllProductUsecase(productRepository);
+  const addStockUsecase = new AddStockUsecase(productRepository);
+  const createSalesUsecase = new CreateSalesUsecase(
+    salesRepository,
+    productRepository,
+    fastify,
+  );
+
   // Controllers
   const customerController = new CustomerController(
     createCustomerUsecase,
     loginUsecase,
     refreshTokenUsecase,
   );
-
-  const productController = new ProductController(createProductUsecase, getAllProductUsecase, addStockUsecase);
+  const productController = new ProductController(
+    createProductUsecase,
+    getAllProductUsecase,
+    addStockUsecase,
+  );
+  const salesController = new SalesController(createSalesUsecase);
 
   fastify.decorate("customerController", customerController);
   fastify.decorate("productController", productController);
+  fastify.decorate("salesController", salesController);
 });
 
 export default diPlugin;
