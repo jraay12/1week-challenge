@@ -2,6 +2,7 @@ import fp from "fastify-plugin";
 import { CustomerRepository } from "../infrastructure/repositories/CustomerRepository";
 import { CreateCustomerUsecase } from "../application/usecases/CreateCustomerUsecase";
 import { CustomerController } from "../interfaces/controllers/customer.controller";
+import { BcryptPasswordHasher } from "../infrastructure/services/BcryptPasswordHasher";
 import { FastifyPluginAsync } from "fastify";
 
 declare module "fastify" {
@@ -12,7 +13,8 @@ declare module "fastify" {
 
 const diPlugin: FastifyPluginAsync = fp(async (fasitfy) => {
   const customerRepository = new CustomerRepository(fasitfy);
-  const createCustomerUsecase = new CreateCustomerUsecase(customerRepository);
+  const bcryptPasswordHasher = new BcryptPasswordHasher(fasitfy)
+  const createCustomerUsecase = new CreateCustomerUsecase(customerRepository, bcryptPasswordHasher);
   const customerController = new CustomerController(createCustomerUsecase);
 
   fasitfy.decorate("customerController", customerController);
