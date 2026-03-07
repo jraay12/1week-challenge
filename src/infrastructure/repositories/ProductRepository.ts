@@ -31,4 +31,29 @@ export class ProductRepository implements IProductRepository {
 
     return Product.fromPersistenceArray(product);
   }
+
+  async addStock(product_id: string, quantity: number): Promise<void> {
+    await this.fastify.prisma.product.update({
+      where: {
+        id: product_id,
+      },
+      data: {
+        stock: {
+          increment: quantity,
+        },
+      },
+    });
+  }
+
+  async findById(product_id: string): Promise<Product | null> {
+    const product = await this.fastify.prisma.product.findUnique({
+      where: {
+        id: product_id,
+      },
+    });
+
+    if (!product) return null;
+
+    return Product.fromPersistence(product);
+  }
 }
