@@ -1,6 +1,8 @@
 import Fastify from "fastify";
 import prismaPlugin from "./plugins/prisma";
+import diPlugin from "./plugins/di";
 import { errorHandler } from "./interfaces/middleware/errorHandler";
+import { customerRoutes } from "./interfaces/routes/customer.route";
 const fastify = Fastify({
   logger: true,
 });
@@ -16,5 +18,7 @@ fastify.get("/health", async () => {
 
 fastify.setErrorHandler(errorHandler)
 fastify.register(prismaPlugin)
+fastify.register(diPlugin)
+fastify.register(customerRoutes, {prefix: "/customers"})
 
 export default fastify;
