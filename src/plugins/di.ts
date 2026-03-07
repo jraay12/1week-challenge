@@ -7,6 +7,8 @@ import { FastifyPluginAsync } from "fastify";
 import { Payload } from "../domain/services/ITokenService";
 import { LoginUsecase } from "../application/usecases/LoginUsecase";
 import { JwtService } from "../infrastructure/services/JwtService";
+import { RefreshTokenUsecase } from "../application/usecases/RefreshTokenUsecase";
+
 declare module "fastify" {
   interface FastifyInstance {
     customerController: CustomerController;
@@ -39,11 +41,16 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     bcryptPasswordHasher,
     jwtService,
   );
+  const refreshTokenUsecase = new RefreshTokenUsecase(
+    jwtService,
+    customerRepository,
+  );
 
   // Controllers
   const customerController = new CustomerController(
     createCustomerUsecase,
     loginUsecase,
+    refreshTokenUsecase,
   );
 
   fastify.decorate("customerController", customerController);
