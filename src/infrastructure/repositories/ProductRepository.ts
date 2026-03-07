@@ -10,4 +10,25 @@ export class ProductRepository implements IProductRepository {
       data: product,
     });
   }
+
+  async getAllProduct(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<Product[]> {
+    const skip = (page - 1) * limit;
+    const product = await this.fastify.prisma.product.findMany({
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        stock: {
+          gt: 0,
+        },
+      },
+    });
+
+    return Product.fromPersistenceArray(product);
+  }
 }

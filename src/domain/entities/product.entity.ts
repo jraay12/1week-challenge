@@ -56,6 +56,10 @@ export class Product {
     });
   }
 
+  static fromPersistenceArray(data: ProductProps[]): Product[] {
+    return data.map((product) => new Product(product));
+  }
+
    toJSON(): ProductResponseDTO {
       return {
         id: this.id,

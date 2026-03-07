@@ -11,6 +11,7 @@ import { RefreshTokenUsecase } from "../application/usecases/RefreshTokenUsecase
 import { ProductController } from "../interfaces/controllers/product.controller";
 import { ProductRepository } from "../infrastructure/repositories/ProductRepository";
 import { CreateProductUsecase } from "../application/usecases/CreateProductUsecase";
+import { GetAllProductUsecase } from "../application/usecases/GetAllProductUsecase";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -51,6 +52,7 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     customerRepository,
   );
   const createProductUsecase = new CreateProductUsecase(productRepository);
+  const getAllProductUsecase = new GetAllProductUsecase(productRepository)
 
   // Controllers
   const customerController = new CustomerController(
@@ -59,7 +61,7 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     refreshTokenUsecase,
   );
 
-  const productController = new ProductController(createProductUsecase);
+  const productController = new ProductController(createProductUsecase, getAllProductUsecase);
 
   fastify.decorate("customerController", customerController);
   fastify.decorate("productController", productController);
