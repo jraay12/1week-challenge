@@ -5,6 +5,7 @@ import { errorHandler } from "./interfaces/middleware/errorHandler";
 import { customerRoutes } from "./interfaces/routes/customer.route";
 import { bcryptPlugin } from "./plugins/bcrypt";
 import { jwtPlugin } from "./plugins/jwt";
+import fastifyCookie from "@fastify/cookie";
 const fastify = Fastify({
   logger: true,
 });
@@ -18,11 +19,14 @@ fastify.get("/health", async () => {
   };
 });
 
-fastify.setErrorHandler(errorHandler)
-fastify.register(prismaPlugin)
-fastify.register(diPlugin)
-fastify.register(bcryptPlugin)
-fastify.register(jwtPlugin)
-fastify.register(customerRoutes, {prefix: "/customers"})
+fastify.setErrorHandler(errorHandler);
+fastify.register(prismaPlugin);
+fastify.register(diPlugin);
+fastify.register(bcryptPlugin);
+fastify.register(jwtPlugin);
+fastify.register(fastifyCookie, {
+  secret: process.env.COOKIE_TOKEN_SECRET!,
+});
+fastify.register(customerRoutes, { prefix: "/customers" });
 
 export default fastify;
