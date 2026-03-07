@@ -1,5 +1,9 @@
 import Fastify from "fastify";
-
+import prismaPlugin from "./plugins/prisma";
+import diPlugin from "./plugins/di";
+import { errorHandler } from "./interfaces/middleware/errorHandler";
+import { customerRoutes } from "./interfaces/routes/customer.route";
+import { bcryptPlugin } from "./plugins/bcrypt";
 const fastify = Fastify({
   logger: true,
 });
@@ -12,5 +16,11 @@ fastify.get("/health", async () => {
     timestamp: new Date().toISOString(),
   };
 });
+
+fastify.setErrorHandler(errorHandler)
+fastify.register(prismaPlugin)
+fastify.register(diPlugin)
+fastify.register(bcryptPlugin)
+fastify.register(customerRoutes, {prefix: "/customers"})
 
 export default fastify;
