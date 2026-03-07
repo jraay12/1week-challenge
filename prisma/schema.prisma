@@ -21,6 +21,7 @@ model Customer {
   phone     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  sales Sales[]
 }
 
 model Product {
@@ -31,4 +32,21 @@ model Product {
   stock     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  sales Sales[]
+}
+
+model Sales {
+  id        String   @id @default(uuid())
+  customerId String
+  productId String
+  quantity Int
+  saleDate DateTime @default(now())
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+   @@index([saleDate])
 }
