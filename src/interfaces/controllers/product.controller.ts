@@ -3,10 +3,12 @@ import { CreateProductUsecase } from "../../application/usecases/CreateProductUs
 import { FastifyRequest, FastifyReply } from "fastify";
 import { GetAllProductUsecase } from "../../application/usecases/GetAllProductUsecase";
 import { GetProductQueryDTO } from "../../application/dto/GetProductQueryDTO";
+import { AddStockUsecase } from "../../application/usecases/AddStockUsecase";
 export class ProductController {
   constructor(
     private createProductUsecase: CreateProductUsecase,
     private getAllProductUsecase: GetAllProductUsecase,
+    private addStockUsecase: AddStockUsecase,
   ) {}
 
   create = async (
@@ -30,5 +32,20 @@ export class ProductController {
 
     const product = await this.getAllProductUsecase.execute(page, limit);
     reply.status(200).send({ results: product });
+  };
+
+  addStock = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { productId } = request.params as { productId: string };
+    const { quantity } = request.body as { quantity: number };
+
+    const { productName } = await this.addStockUsecase.execute(
+      productId,
+      quantity,
+    );
+    reply
+      .status(200)
+      .send({
+        message: `Successfully added ${quantity} units to ${productName} stock.`,
+      });
   };
 }
