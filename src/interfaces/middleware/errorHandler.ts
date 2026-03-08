@@ -25,5 +25,13 @@ export function errorHandler(
     return reply.status(401).send({ error: error.message });
   }
 
+  if ("validation" in error && Array.isArray(error.validation)) {
+    return reply.status(400).send({
+      error: "Validation error",
+      details: error.message,
+    });
+  }
+
+
   return reply.status(500).send({ error: "Internal server error" });
 }
