@@ -16,6 +16,8 @@ import { AddStockUsecase } from "../application/usecases/AddStockUsecase";
 import { SalesRepository } from "../infrastructure/repositories/SalesRepository";
 import { SalesController } from "../interfaces/controllers/sales.controller";
 import { CreateSalesUsecase } from "../application/usecases/CreateSaleUsecase";
+import { GetSalesMonthUsecase } from "../application/usecases/GetSalesByMonthUsecase";
+
 declare module "fastify" {
   interface FastifyInstance {
     customerController: CustomerController;
@@ -64,6 +66,7 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     productRepository,
     fastify,
   );
+  const getMonthlySalesUsecase = new GetSalesMonthUsecase(salesRepository)
 
   // Controllers
   const customerController = new CustomerController(
@@ -76,7 +79,7 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     getAllProductUsecase,
     addStockUsecase,
   );
-  const salesController = new SalesController(createSalesUsecase);
+  const salesController = new SalesController(createSalesUsecase, getMonthlySalesUsecase);
 
   fastify.decorate("customerController", customerController);
   fastify.decorate("productController", productController);
