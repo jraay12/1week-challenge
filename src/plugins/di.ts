@@ -17,6 +17,7 @@ import { SalesRepository } from "../infrastructure/repositories/SalesRepository"
 import { SalesController } from "../interfaces/controllers/sales.controller";
 import { CreateSalesUsecase } from "../application/usecases/CreateSaleUsecase";
 import { GetSalesMonthUsecase } from "../application/usecases/GetSalesByMonthUsecase";
+import { AuthenticationMiddleware } from "../interfaces/middleware/authenticationMiddleware";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -32,6 +33,14 @@ declare module "fastify" {
       signRefreshToken(payload: Payload): string;
       verifyAccessToken(token: string): Payload;
       verifyRefreshToken(token: string): Payload;
+    };
+    authenticationMiddleware: AuthenticationMiddleware
+  }
+
+  interface FastifyRequest {
+    user: {
+      id: string;
+      role: string;
     };
   }
 }
@@ -66,7 +75,7 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     productRepository,
     fastify,
   );
-  const getMonthlySalesUsecase = new GetSalesMonthUsecase(salesRepository)
+  const getMonthlySalesUsecase = new GetSalesMonthUsecase(salesRepository);
 
   // Controllers
   const customerController = new CustomerController(
@@ -79,11 +88,18 @@ const diPlugin: FastifyPluginAsync = fp(async (fastify) => {
     getAllProductUsecase,
     addStockUsecase,
   );
-  const salesController = new SalesController(createSalesUsecase, getMonthlySalesUsecase);
+  const salesController = new SalesController(
+    createSalesUsecase,
+    getMonthlySalesUsecase,
+  );
+
+  // Middleware
+  const authenticationMiddleware = new AuthenticationMiddleware(jwtService)
 
   fastify.decorate("customerController", customerController);
   fastify.decorate("productController", productController);
   fastify.decorate("salesController", salesController);
+  fastify.decorate("authenticationMiddleware", authenticationMiddleware)
 });
 
 export default diPlugin;

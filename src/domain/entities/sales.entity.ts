@@ -7,6 +7,7 @@ export interface SaleProps {
   productId: string;
   quantity: number;
   saleDate?: Date;
+  totalAmount?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,7 +24,7 @@ export class Sales {
   }
 
   static create(
-    props: Omit<SaleProps, "id" | "createdAt" | "updatedAt">,
+    props: Omit<SaleProps, "id" | "createdAt" | "updatedAt" | "totalAmount">,
   ): Sales {
     if (!props.customerId) throw new BadRequestError("Customer is required.");
 
@@ -40,6 +41,12 @@ export class Sales {
 
   static fromPersistence(data: SaleProps): Sales {
     return new Sales(data);
+  }
+
+  setTotalAmount(amount: number) {
+    if (amount <= 0)
+      throw new BadRequestError("Total amount must be greater than zero");
+    this.props.totalAmount = amount;
   }
 
   toJSON() {
@@ -81,5 +88,9 @@ export class Sales {
 
   get updatedAt() {
     return this.props.updatedAt;
+  }
+
+  get totalAmount() {
+    return this.props.totalAmount;
   }
 }

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Sales` ADD COLUMN `totalAmount` DOUBLE NOT NULL DEFAULT 0;

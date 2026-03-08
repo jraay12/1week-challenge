@@ -44,7 +44,7 @@ model Sales {
 
   customer   Customer @relation(fields: [customerId], references: [id])
   product    Product  @relation(fields: [productId], references: [id])
-
+  totalAmount Float @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 

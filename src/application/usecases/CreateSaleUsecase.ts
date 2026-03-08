@@ -22,7 +22,10 @@ export class CreateSalesUsecase {
       if (data.quantity > product.stock)
         throw new BadRequestError("Insufficient stock");
 
+      const totalAmount = product.price * data.quantity
+
       const sales = Sales.create(data);
+      sales.setTotalAmount(totalAmount)
       await this.salesRepo.create(sales);
       await this.productRepo.deductStock(data.productId, data.quantity)
     });

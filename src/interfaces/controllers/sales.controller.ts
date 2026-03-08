@@ -5,13 +5,16 @@ import { GetSalesMonthUsecase } from "../../application/usecases/GetSalesByMonth
 import { MonthlySalesDTO } from "../../application/dto/MonthlySalesDTO";
 
 export class SalesController {
-  constructor(private createSalesUsecase: CreateSalesUsecase, private getMonthlySalesUsecase: GetSalesMonthUsecase) {}
+  constructor(
+    private createSalesUsecase: CreateSalesUsecase,
+    private getMonthlySalesUsecase: GetSalesMonthUsecase,
+  ) {}
 
   create = async (request: FastifyRequest, reply: FastifyReply) => {
     const { productId } = request.params as { productId: string };
     const { quantity } = request.body as { quantity: number };
 
-    const customerId = "01e77510-c1d4-40e1-a9b3-7c71fbfeb024";
+    const customerId = request.user.id;
 
     const input: CreateSaleDTO = {
       customerId,
@@ -28,7 +31,10 @@ export class SalesController {
 
   getSalesByMonth = async (request: FastifyRequest, reply: FastifyReply) => {
     const { month, year } = request.query as { month: number; year: number };
-    const sales: MonthlySalesDTO[] = await this.getMonthlySalesUsecase.execute(month, year);
+    const sales: MonthlySalesDTO[] = await this.getMonthlySalesUsecase.execute(
+      month,
+      year,
+    );
     reply.status(200).send({
       message: `Sales for ${month}/${year}`,
       result: sales,
