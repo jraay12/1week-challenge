@@ -56,7 +56,7 @@ If any port is in use, stop the process using it before continuing.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/1week-challenge.git
+git clone https://github.com/jraay12/1week-challenge.git
 cd 1week-challenge
 ```
 
@@ -120,6 +120,21 @@ If you see a healthy response, the backend is up and running! 🎉
 | API | http://localhost:3000 |
 | Health Check | http://localhost:3000/health |
 | phpMyAdmin | http://localhost:8080 |
+
+---
+
+## 🧪 Testing with Postman
+
+A Postman collection is included in the repository for testing all available endpoints.
+
+### Import the collection
+
+1. Open **Postman**
+2. Click **Import**
+3. Select the file: `./postman/1week challenge.postman_collection.json`
+4. The collection will appear in your Postman sidebar ready to use
+
+> Make sure the API is running at `http://localhost:3000` before sending requests.
 
 ---
 
