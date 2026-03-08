@@ -19,6 +19,7 @@ export class SalesRepository implements ISalesRepository {
         saleDate: sale.saleDate,
         createdAt: sale.createdAt,
         updatedAt: sale.updatedAt,
+        totalAmount: sale.totalAmount
       },
     });
   }
